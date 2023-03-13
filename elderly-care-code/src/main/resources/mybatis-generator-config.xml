@@ -1,5 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="org.cuit.epoch.huihaiGarden.mapper.NoticeMapper">
-
-</mapper>
+<!DOCTYPE generatorConfiguration
+        PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+        "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+<generatorConfiguration>
+    <!--<classPathEntry location="E:\mysql-connector-java-5.1.29.jar"/>-->
+    <context id="mybatis" targetRuntime="mybatis3simple" defaultModelType="flat">
+        <commentGenerator>
+            <property name="suppressDate" value="true"/>
+            <property name="addRemarkComments" value="true"/>
+        </commentGenerator>
+        <jdbcConnection driverClass="com.mysql.jdbc.Driver"
+                        connectionURL="jdbc:mysql://47.113.185.11:3319/elderly-care?useSSL=false"
+                        userId="root"
+                        password="123456">
+        </jdbcConnection>
+        <javaTypeResolver>
+            <property name="forceBigDecimals" value="false"/>
+        </javaTypeResolver>
+        <javaModelGenerator targetPackage="org.cuit.app.entity"
+                            targetProject="elderly-care-code/src/main/java">
+            <property name="enableSubPackages" value="false"/>
+            <property name="trimStrings" value="false"/>
+        </javaModelGenerator>
+        <sqlMapGenerator targetPackage="org.cuit.app.mapper.xml"
+                         targetProject="elderly-care-code/src/main/java">
+            <property name="enableSubPackages" value="false"/>
+        </sqlMapGenerator>
+        <javaClientGenerator type="XMLMAPPER"
+                             targetPackage="org.cuit.app.mapper"
+                             targetProject="elderly-care-code/src/main/java">
+        </javaClientGenerator>
+        <table tableName="%">
+            <generatedKey column="id" sqlStatement="MySql"/>
+            <domainObjectRenamingRule searchString="^T" replaceString="" />
+        </table>
+    </context>
+</generatorConfiguration>

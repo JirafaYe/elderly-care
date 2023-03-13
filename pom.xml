@@ -4,14 +4,132 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.example</groupId>
-    <artifactId>untitled6</artifactId>
+    <groupId>org.cuit.app</groupId>
+    <artifactId>elderly-care</artifactId>
     <version>1.0-SNAPSHOT</version>
+
+    <packaging>pom</packaging>
+    <modules>
+        <module>elderly-care-code</module>
+    </modules>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <spring-boot.version>2.7.7</spring-boot.version>
+        <druid.version>1.2.15</druid.version>
+        <fastjson.version>2.0.22</fastjson.version>
+        <jjwt.version>0.9.1</jjwt.version>
+        <mybatis-plus-boot-starter.version>3.5.2</mybatis-plus-boot-starter.version>
+        <lombok.version>1.18.20</lombok.version>
+        <mysql.version>5.1.47</mysql.version>
+        <mybatis-generator>1.4.0</mybatis-generator>
+        <mybatis-plus-generator>3.4.1</mybatis-plus-generator>
+        <velocity.version>1.7</velocity.version>
     </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>mysql</groupId>
+                <artifactId>mysql-connector-java</artifactId>
+                <version>${mysql.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombok.version}</version>
+            </dependency>
+
+            <!-- SpringBoot 依赖配置 -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${spring-boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <!-- JSON 解析器和生成器 -->
+            <dependency>
+                <groupId>com.alibaba.fastjson2</groupId>
+                <artifactId>fastjson2</artifactId>
+                <version>${fastjson.version}</version>
+            </dependency>
+
+            <!-- JWT -->
+            <dependency>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt</artifactId>
+                <version>${jjwt.version}</version>
+            </dependency>
+
+            <!--Mybatis Plus依赖-->
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>mybatis-plus-boot-starter</artifactId>
+                <version>${mybatis-plus-boot-starter.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>mybatis-plus-generator</artifactId>
+                <version>${mybatis-plus-generator}</version>
+            </dependency>
+            <!-- mybatis plus 代码生成器引擎依赖-->
+            <dependency>
+                <groupId>org.apache.velocity</groupId>
+                <artifactId>velocity</artifactId>
+                <version>${velocity.version}</version>
+            </dependency>
+
+<!--            <dependency>-->
+<!--                <groupId>org.mybatis.generator</groupId>-->
+<!--                <artifactId>mybatis-generator-core</artifactId>-->
+<!--                <version>${mybatis-generator}</version>-->
+<!--            </dependency>-->
+            <!--druid连接池-->
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>druid-spring-boot-starter</artifactId>
+                <version>${druid.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-maven-plugin</artifactId>
+                    <version>${spring-boot.version}</version>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>repackage</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <configuration>
+                        <source>${java.version}</source>
+                        <target>${java.version}</target>
+                        <encoding>${project.build.sourceEncoding}</encoding>
+                    </configuration>
+                    <version>3.9.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.mybatis.generator</groupId>
+                    <artifactId>mybatis-generator-maven-plugin</artifactId>
+                    <version>${mybatis-generator}</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
 
 </project>
