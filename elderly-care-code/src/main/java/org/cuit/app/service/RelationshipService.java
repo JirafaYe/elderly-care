@@ -1,7 +1,10 @@
 package org.cuit.app.service;
 
 import org.cuit.app.entity.Relationship;
-import com.baomidou.mybatisplus.extension.service.IService;
+import org.cuit.app.mapper.RelationshipMapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  * <p>
@@ -11,6 +14,8 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @author jirafa
  * @since 2023-03-14
  */
-public interface RelationshipService extends IService<Relationship> {
+@Service
+public class RelationshipService extends ServiceImpl<RelationshipMapper, Relationship> {
+
 
 }

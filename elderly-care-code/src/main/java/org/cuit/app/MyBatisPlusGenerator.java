@@ -37,44 +37,26 @@ public class MyBatisPlusGenerator {
     private static String PATH_SERVICE_IMP = "/src/main/java/org/cuit/app/service/sign/";
     private static String PATH_ENTITY = "/src/main/java/org/cuit/app/entity";
 
+        public final static String PROJECT_PATH="D:\\IdeaProject\\elderly-care\\elderly-care-code";
+
 
     public static void main(String[] args) {
         AutoGenerator mpg = new AutoGenerator();
 
         // 2、全局配置
         GlobalConfig gc = new GlobalConfig();
-        String projectPath = System.getProperty("user.dir");
-        // 此处建议写项目/src/main/java源代码的绝对路径
-        gc.setOutputDir("C:\\idea\\onlinedu-parent\\service\\service-edu" + "/src/main/java");
-        // 生成注释时的作者
-        gc.setAuthor("scorpios");
-        //生成后是否打开资源管理器
-        gc.setOpen(false);
-        gc.setFileOverride(true); //重新生成时文件是否覆盖
-//        gc.setServiceName("%sService");	//去掉Service接口的首字母I
-        gc.setIdType(IdType.AUTO); //主键策略
-        gc.setDateType(DateType.ONLY_DATE); //定义生成的实体类中日期类型
-        // 如果开启Swagger,要引入相应的包
-        gc.setSwagger2(true); //开启Swagger2模式
-
-        mpg.setGlobalConfig(gc);
 
 
-        // 全局配置
-//        String projectPath = System.getProperty("user.dir");
         // 生成文件的输出目录
-        gc.setOutputDir("D:\\IdeaProject\\elderly-care\\elderly-care-code" + "/src/main/java");
+        gc.setOutputDir(PROJECT_PATH+ "/src/main/java");
         // 作者
         gc.setAuthor("jirafa");
         // 生成后打开目录
         gc.setOpen(false);
+        gc.setFileOverride(true);
         // 设置时间类型使用哪个包下的
         gc.setDateType(DateType.ONLY_DATE);
-        // 文件命名方式
-//        gc.setMapperName("User" + "Mapper");
-//        gc.setEntityName("User" + "Bean");
-//        gc.setXmlName("User" + "Mapper");
-//        gc.setControllerName(prefix + "Controller");
+
         gc.setServiceName("%sService");
         // 主键策略
         gc.setIdType(IdType.INPUT);
@@ -110,18 +92,35 @@ public class MyBatisPlusGenerator {
                 this.setMap(map);
             }
         };
-        mpg.setCfg(injectionConfig);
+
 
         // 配置模板
-//        TemplateConfig templateConfig = new TemplateConfig();
-//        // 使用自定义模板，不想要生成就设置为null,如果不设置null会使用默认模板
-//        templateConfig.setEntity("templates/entity2.java");
-//        templateConfig.setController("templates/controller2.java");
-//        templateConfig.setMapper("templates/mapper2.java");
-//        templateConfig.setService("templates/service2.java");
-//        templateConfig.setServiceImpl(null);
-//        templateConfig.setXml(null);
-//        mpg.setTemplate(templateConfig);
+        TemplateConfig templateConfig = new TemplateConfig();
+
+        // 关闭原有生成
+        templateConfig.setService(null);
+        templateConfig.setServiceImpl(null);
+
+        // 自定义输出配置
+        List<FileOutConfig> focList = new ArrayList<>();
+
+        // 模板文件位置
+        String serviceTemplatePath = "templates/myService.java.vm";
+
+        focList.add(new FileOutConfig(serviceTemplatePath) {
+            @Override
+            public String outputFile(TableInfo tableInfo) {
+                // 自定义输出文件名 ， 如果你 Entity 设置了前后缀、此处注意 xml 的名称会跟着发生变化！！    下面是service实现类位置：com.fzg.service包下
+                return PROJECT_PATH + "/src/main/java/org/cuit/app/service"
+                        + "/" + tableInfo.getEntityName() + "Service" + StringPool.DOT_JAVA;
+            }
+        });
+
+        injectionConfig.setFileOutConfigList(focList);
+        mpg.setCfg(injectionConfig);
+        mpg.setTemplate(templateConfig);
+
+
 
         //配置策略
         StrategyConfig strategy = new StrategyConfig();
