@@ -57,6 +57,11 @@ public class Constants {
     public static final Integer FAIL = 500;
 
     /**
+     * 认证失败标记
+     */
+    public static final Integer UNAUTHORIZED = 401;
+
+    /**
      * 登录成功状态
      */
     public static final String LOGIN_SUCCESS_STATUS = "0";

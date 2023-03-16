@@ -5,6 +5,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.cuit.app.constant.TokenConstants;
 
+import java.util.Date;
 import java.util.Map;
 
 /**
@@ -22,7 +23,10 @@ public class JwtUtils{
      * @return 令牌
      */
     public static String createToken(Map<String, Object> claims) {
-        String token = Jwts.builder().setClaims(claims).signWith(SignatureAlgorithm.HS512, secret).compact();
+        String token = Jwts.builder()
+                .setClaims(claims).signWith(SignatureAlgorithm.HS512, secret)
+                .setExpiration(new Date(System.currentTimeMillis()+TokenConstants.EXPIRATION))
+                .compact();
         return token;
     }
 
@@ -44,7 +48,7 @@ public class JwtUtils{
      */
     public static String getUserId(String token) {
         Claims claims = parseToken(token);
-        return getValue(claims, TokenConstants.USER_KEY);
+        return getValue(claims, TokenConstants.USER_ID);
     }
 
     /**
@@ -54,7 +58,7 @@ public class JwtUtils{
      * @return 用户ID
      */
     public static String getUserId(Claims claims) {
-        return getValue(claims, TokenConstants.USER_KEY);
+        return getValue(claims, TokenConstants.USER_ID);
     }
 
     /**
@@ -76,6 +80,16 @@ public class JwtUtils{
      */
     public static String getUserName(Claims claims) {
         return getValue(claims, TokenConstants.USER_NAME);
+    }
+
+    /**
+     * 根据身份信息获取身份
+     *
+     * @param claims 身份信息
+     * @return 用户名
+     */
+    public static String getUserIdentity(Claims claims) {
+        return getValue(claims, TokenConstants.USER_IDENTITY);
     }
 
     /**

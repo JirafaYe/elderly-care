@@ -1,6 +1,8 @@
 package org.cuit.app.handler;
 
 import lombok.extern.slf4j.Slf4j;
+import org.cuit.app.constant.Constants;
+import org.cuit.app.exception.AuthorizedException;
 import org.cuit.app.utils.R;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
@@ -68,5 +70,11 @@ public class GlobalExceptionHandler {
     public R<?> unknownError(Exception e) {
         log.error(e.getMessage());
         return R.fail("发生未知异常，请一段时间后重试或联系管理员！");
+    }
+
+    @ExceptionHandler(AuthorizedException.class)
+    public R<?> authorizedError(Exception e){
+        log.error(e.getMessage(),e);
+        return R.fail(e.getMessage(),Constants.UNAUTHORIZED);
     }
 }

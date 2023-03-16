@@ -24,7 +24,7 @@ public class TokenConstants {
     /**
      * 用户id
      */
-    public final static String USER_KEY="id";
+    public final static String USER_ID ="id";
 
     /**
      * 用户名
@@ -34,5 +34,10 @@ public class TokenConstants {
     /**
      * 用户身份
      */
-    public final static String USER_Identity="identity";
+    public final static String USER_IDENTITY ="is_elderly";
+
+    /**
+     * 过期时间
+     */
+    public final static Integer EXPIRATION =60*1000;
 }

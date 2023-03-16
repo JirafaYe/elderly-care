@@ -30,3 +30,13 @@ spring:
         min-idle: 8
         max-wait: 10000
     timeout: 5000
+
+pagehelper:
+  reasonable: true
+  helper-dialect: mysql
+mybatis-plus:
+  type-aliases-package: org.cuit.app.entity,org.cuit.app.entity.vo
+  mapper-locations: classpath:org/cuit/app/mapper/xml/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
