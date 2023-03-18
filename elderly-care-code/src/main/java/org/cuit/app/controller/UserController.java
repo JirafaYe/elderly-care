@@ -27,14 +27,14 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/sign-up")
-    public R signUp(@Valid @RequestBody UserVO userVO) throws UnsupportedEncodingException, NoSuchAlgorithmException {
+    public R signUp(@Valid @RequestBody UserVO userVO){
         return R.ok(userService.signUp(userVO));
     }
 
-//    @GetMapping("/login")
-//    public R login(@Valid @RequestBody UserVO userVO){
-//
-//    }
+    @GetMapping("/login")
+    public R login(@Valid @RequestBody UserVO userVO){
+        return R.ok(userService.login(userVO));
+    }
 
 }
 

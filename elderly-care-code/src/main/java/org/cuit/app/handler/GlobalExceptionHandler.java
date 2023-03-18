@@ -1,8 +1,10 @@
 package org.cuit.app.handler;
 
+import org.springframework.dao.DuplicateKeyException;
 import lombok.extern.slf4j.Slf4j;
 import org.cuit.app.constant.Constants;
 import org.cuit.app.exception.AuthorizedException;
+import org.cuit.app.exception.LoginException;
 import org.cuit.app.utils.R;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
@@ -72,9 +74,15 @@ public class GlobalExceptionHandler {
         return R.fail("发生未知异常，请一段时间后重试或联系管理员！");
     }
 
-    @ExceptionHandler(AuthorizedException.class)
+    @ExceptionHandler({AuthorizedException.class, LoginException.class})
     public R<?> authorizedError(Exception e){
         log.error(e.getMessage(),e);
-        return R.fail(e.getMessage(),Constants.UNAUTHORIZED);
+        return R.fail(Constants.UNAUTHORIZED,e.getMessage());
+    }
+
+    @ExceptionHandler({DuplicateKeyException.class})
+    public R<?> registerError(Exception e){
+        log.error(e.getMessage());
+        return R.fail(Constants.UNAUTHORIZED,"用户名重复");
     }
 }
