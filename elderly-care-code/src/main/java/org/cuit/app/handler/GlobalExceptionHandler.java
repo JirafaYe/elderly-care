@@ -1,5 +1,7 @@
 package org.cuit.app.handler;
 
+import io.jsonwebtoken.ExpiredJwtException;
+import org.cuit.app.exception.AppException;
 import org.springframework.dao.DuplicateKeyException;
 import lombok.extern.slf4j.Slf4j;
 import org.cuit.app.constant.Constants;
@@ -61,7 +63,7 @@ public class GlobalExceptionHandler {
         StringBuilder msg = new StringBuilder();
         assert bindingResult != null;
         bindingResult.getFieldErrors().forEach((fieldError) ->
-                msg.append(fieldError.getDefaultMessage()).append(" ")
+                msg.append(fieldError.getField()).append(fieldError.getDefaultMessage()).append(" ")
         );
         String res = msg.toString().trim();
         log.error(res);
@@ -70,19 +72,29 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public R<?> unknownError(Exception e) {
-        log.error(e.getMessage());
+        log.error(e.getMessage(),e.getClass().toString());
         return R.fail("发生未知异常，请一段时间后重试或联系管理员！");
     }
 
-    @ExceptionHandler({AuthorizedException.class, LoginException.class})
+    @ExceptionHandler({AuthorizedException.class, LoginException.class, ExpiredJwtException.class})
     public R<?> authorizedError(Exception e){
-        log.error(e.getMessage(),e);
-        return R.fail(Constants.UNAUTHORIZED,e.getMessage());
+        String message = e.getMessage();
+        if(e.getClass().equals(ExpiredJwtException.class)){
+            message="token过期，请重新登录";
+        }
+        log.error(message);
+        return R.fail(Constants.UNAUTHORIZED,message);
     }
 
     @ExceptionHandler({DuplicateKeyException.class})
     public R<?> registerError(Exception e){
         log.error(e.getMessage());
         return R.fail(Constants.UNAUTHORIZED,"用户名重复");
+    }
+
+    @ExceptionHandler({AppException.class})
+    public R<?> appError(Exception e){
+        log.error(e.getMessage());
+        return R.fail(e.getMessage());
     }
 }

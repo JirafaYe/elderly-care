@@ -39,5 +39,5 @@ public class TokenConstants {
     /**
      * 过期时间
      */
-    public final static Integer EXPIRATION =60*1000;
+    public final static Integer EXPIRATION =3600*1000;
 }

@@ -62,6 +62,10 @@ public class Constants {
     public static final Integer UNAUTHORIZED = 401;
 
     /**
+     * 用于储存已经登陆用户信息
+     */
+    public static final String USER_ATTRIBUTE = "userInfo";
+    /**
      * 登录成功状态
      */
     public static final String LOGIN_SUCCESS_STATUS = "0";
