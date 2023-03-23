@@ -7,7 +7,7 @@ spring:
     driver-class-name: com.mysql.jdbc.Driver
     username: root
     password: 123456
-    url: jdbc:mysql://47.113.185.11:3319/elderly-care?useSSL=false
+    url: jdbc:mysql://47.113.185.11:3319/elderly-care?useSSL=false&useUnicode=yes&characterEncoding=utf8
     type: com.alibaba.druid.pool.DruidDataSource
     druid:
       initial-size: 5       # 初始线程数
@@ -30,6 +30,11 @@ spring:
         min-idle: 8
         max-wait: 10000
     timeout: 5000
+  jta:
+    atomikos:
+      properties:
+        recovery:
+          forget-orphaned-log-entries-delay:
 
 pagehelper:
   reasonable: true
@@ -40,3 +45,4 @@ mybatis-plus:
   configuration:
     map-underscore-to-camel-case: true
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+

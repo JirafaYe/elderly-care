@@ -5,15 +5,19 @@ import lombok.AllArgsConstructor;
 import org.apache.ibatis.annotations.Param;
 import org.cuit.app.constant.Constants;
 import org.cuit.app.entity.User;
+import org.cuit.app.entity.vo.CheckBindingVO;
 import org.cuit.app.exception.AuthorizedException;
 import org.cuit.app.service.RelationshipService;
 import org.cuit.app.utils.R;
+import org.cuit.app.webSocket.CheckBindingWebSocket;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.websocket.EncodeException;
+import java.io.IOException;
 
 /**
  * <p>
@@ -29,13 +33,26 @@ import javax.servlet.http.HttpServletRequest;
 public class RelationshipController {
     private final RelationshipService relationshipService;
 
-    @PostMapping("/bindings")
-    public R<?> bindElderly(@Param("username")String username, HttpServletRequest request){
+    @PostMapping("/binding")
+    public R<?> bindElderly(@Param("username")String username, HttpServletRequest request) throws IOException {
         User userInfo = (User) request.getAttribute(Constants.USER_ATTRIBUTE);
         if(userInfo.getIsElderly()){
             throw new AuthorizedException("老人不具备绑定权限");
         }
-        relationshipService.bindElderly(userInfo.getId(),username);
+        relationshipService.bindElderly(userInfo,username);
+        return R.ok("等待老人确认");
+    }
+
+    @PostMapping("/check")
+    public R<?> checkBinding(@Param("username")String username
+            ,@Param("permissible") String  permissible
+            ,HttpServletRequest request){
+        boolean isPermissible = Boolean.parseBoolean(permissible);
+        User userInfo = (User) request.getAttribute(Constants.USER_ATTRIBUTE);
+        if(!userInfo.getIsElderly()){
+            throw new AuthorizedException("无操作权限");
+        }
+        relationshipService.checkBinding(isPermissible,userInfo.getId(),username);
         return R.ok();
     }
 }
