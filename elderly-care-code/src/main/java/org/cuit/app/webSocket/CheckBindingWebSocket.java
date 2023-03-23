@@ -13,6 +13,7 @@ import org.cuit.app.utils.R;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
+import javax.annotation.Resource;
 import javax.websocket.*;
 import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
@@ -30,10 +31,6 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 @ServerEndpoint("/notify/bindings/{token}")
 public class CheckBindingWebSocket {
-    /**
-     * 与某个客户端的连接对话
-     */
-    private Session session;
 
     /**
      * 标识当前连接客户端的用户id

@@ -8,6 +8,11 @@ package org.cuit.app.constant;
  */
 public class CacheConstant {
     /**
+     * 关系确认map
+     */
+    public final static String RELATIONSHIP_MAP ="relationship";
+
+    /**
      * 缓存有效期，默认720（分钟）
      */
     public final static long EXPIRATION = 720;

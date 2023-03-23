@@ -1,4 +1,4 @@
-package org.cuit.app.utils.encyp;
+package org.cuit.app.utils;
 
 import org.apache.commons.codec.binary.Hex;
 import org.cuit.app.exception.AppException;

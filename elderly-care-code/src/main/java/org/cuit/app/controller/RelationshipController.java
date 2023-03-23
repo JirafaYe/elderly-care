@@ -10,6 +10,7 @@ import org.cuit.app.exception.AuthorizedException;
 import org.cuit.app.service.RelationshipService;
 import org.cuit.app.utils.R;
 import org.cuit.app.webSocket.CheckBindingWebSocket;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -54,6 +55,16 @@ public class RelationshipController {
         }
         relationshipService.checkBinding(isPermissible,userInfo.getId(),username);
         return R.ok();
+    }
+
+    @GetMapping("/get")
+    public R<?> getBinding(HttpServletRequest request){
+        User userInfo = (User) request.getAttribute(Constants.USER_ATTRIBUTE);
+        if(userInfo.getIsElderly()){
+            return R.ok(relationshipService.getBinder(userInfo.getId()));
+        }else {
+            return R.ok(relationshipService.getElderly(userInfo.getId()));
+        }
     }
 }
 

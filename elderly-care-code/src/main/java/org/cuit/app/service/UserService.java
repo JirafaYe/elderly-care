@@ -7,7 +7,7 @@ import org.cuit.app.exception.LoginException;
 import org.cuit.app.mapper.UserMapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.AllArgsConstructor;
-import org.cuit.app.utils.encyp.EncrypDES;
+import org.cuit.app.utils.EncrypDES;
 import org.springframework.stereotype.Service;
 
 import java.util.LinkedList;
