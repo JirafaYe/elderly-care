@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.Param;
 import org.cuit.app.constant.Constants;
 import org.cuit.app.entity.User;
 import org.cuit.app.entity.vo.CheckBindingVO;
+import org.cuit.app.entity.vo.UserVO;
 import org.cuit.app.exception.AuthorizedException;
 import org.cuit.app.service.RelationshipService;
 import org.cuit.app.utils.R;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import javax.websocket.EncodeException;
 import java.io.IOException;
+import java.util.List;
 
 /**
  * <p>
@@ -60,11 +62,13 @@ public class RelationshipController {
     @GetMapping("/get")
     public R<?> getBinding(HttpServletRequest request){
         User userInfo = (User) request.getAttribute(Constants.USER_ATTRIBUTE);
+        List<UserVO> voList;
         if(userInfo.getIsElderly()){
-            return R.ok(relationshipService.getBinder(userInfo.getId()));
+            voList=relationshipService.getBinder(userInfo.getId());
         }else {
-            return R.ok(relationshipService.getElderly(userInfo.getId()));
+            voList=relationshipService.getElderly(userInfo.getId());
         }
+        return R.ok(voList);
     }
 }
 

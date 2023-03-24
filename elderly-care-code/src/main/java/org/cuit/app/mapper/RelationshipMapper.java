@@ -17,7 +17,7 @@ import java.util.List;
  */
 @Mapper
 public interface RelationshipMapper extends BaseMapper<Relationship> {
-    int getBinder(Integer id);
+    List<Integer> getBinder(Integer id);
 
     List<Integer> getElderly(Integer id);
 }
