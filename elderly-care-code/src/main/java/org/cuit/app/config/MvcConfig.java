@@ -21,6 +21,7 @@ public class MvcConfig implements WebMvcConfigurer {
         //全局刷新作用域
         registry.addInterceptor(loginInterceptor)
                 .addPathPatterns("/**")
-                .excludePathPatterns("/user/**");
+                .excludePathPatterns("/user/login")
+                .excludePathPatterns("/user/sign-up");
     }
 }

@@ -1,5 +1,6 @@
 package org.cuit.app.service;
 
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import org.cuit.app.entity.User;
 import org.cuit.app.entity.vo.UserVO;
 import org.cuit.app.exception.AuthorizedException;
@@ -34,9 +35,23 @@ public class UserService extends ServiceImpl<UserMapper, User> {
         vo.setPassword(EncrypDES.encrypt(vo.getPassword()));
 
         User user = convertToUser(vo);
+        userMapper.insert(user);
 
         if(user.getId()==null) {
             throw new AuthorizedException("注册失败");
+        }
+
+        return tokenService.createToken(user);
+    }
+
+    public Map<String, Object> reset(User user, String password){
+        //密码加密
+        user.setPassword(EncrypDES.encrypt(password));
+
+        UpdateWrapper<User> wrapper = new UpdateWrapper<User>().set("password", user.getPassword()).eq("name", user.getName());
+
+        if(userMapper.update(user,wrapper)<=0) {
+            throw new AuthorizedException("重置密码失败");
         }
 
         return tokenService.createToken(user);
@@ -58,7 +73,6 @@ public class UserService extends ServiceImpl<UserMapper, User> {
         user.setIsElderly(vo.getIsElderly());
         user.setName(vo.getName());
         user.setPassword(vo.getPassword());
-        userMapper.insert(user);
         return user;
     }
 

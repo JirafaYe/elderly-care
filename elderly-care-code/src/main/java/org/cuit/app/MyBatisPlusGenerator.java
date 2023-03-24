@@ -50,10 +50,11 @@ public class MyBatisPlusGenerator {
         // 生成文件的输出目录
         gc.setOutputDir(PROJECT_PATH+ "/src/main/java");
         // 作者
-        gc.setAuthor("jirafa");
+        gc.setAuthor("Jirafa");
         // 生成后打开目录
         gc.setOpen(false);
-        gc.setFileOverride(true);
+        //是否覆盖
+        gc.setFileOverride(false);
         // 设置时间类型使用哪个包下的
         gc.setDateType(DateType.ONLY_DATE);
 
@@ -125,7 +126,7 @@ public class MyBatisPlusGenerator {
         //配置策略
         StrategyConfig strategy = new StrategyConfig();
         // 数据库中表的名字，表示要对哪些表进行自动生成controller service、mapper...
-        strategy.setInclude("t_user","t_relationship");
+        strategy.setInclude("t_todo_list");
         // 数据库表映射到实体的命名策略,驼峰命名法
         strategy.setNaming(NamingStrategy.underline_to_camel);
         // 生成实体时去掉表前缀，比如edu_course，如果不加下面这句，生成的实体类名字就是：EduCourse
