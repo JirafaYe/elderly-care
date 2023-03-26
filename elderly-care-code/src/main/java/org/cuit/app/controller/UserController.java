@@ -2,6 +2,7 @@ package org.cuit.app.controller;
 
 
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.apache.ibatis.annotations.Param;
 import org.cuit.app.constant.Constants;
@@ -16,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 
+
 /**
  * <p>
  *  前端控制器
@@ -27,13 +29,17 @@ import javax.validation.Valid;
 @RestController
 @RequestMapping("/user")
 @AllArgsConstructor
+@Slf4j
 public class UserController {
 
     private final UserService userService;
 
     @PostMapping("/sign-up")
     public R signUp(@Valid @RequestBody UserVO userVO){
-        return R.ok(userService.signUp(userVO));
+        if(userVO.getIsElderly().equals("true")||userVO.getIsElderly().equals("false")){
+            return R.ok(userService.signUp(userVO));
+        }
+        return R.fail("isElderly参数错误");
     }
 
     @GetMapping("/login")

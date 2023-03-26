@@ -27,6 +27,6 @@ public class UserVO {
     /**
      * 是否是老人
      */
-    @NotNull
-    private Boolean isElderly;
+    @NotBlank
+    private String  isElderly;
 }

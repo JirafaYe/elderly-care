@@ -1,6 +1,7 @@
 package org.cuit.app.service;
 
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.cuit.app.entity.User;
 import org.cuit.app.entity.vo.UserVO;
 import org.cuit.app.exception.AuthorizedException;
@@ -70,7 +71,8 @@ public class UserService extends ServiceImpl<UserMapper, User> {
 
     public User convertToUser(UserVO vo) {
         User user = new User();
-        user.setIsElderly(vo.getIsElderly());
+        Boolean.parseBoolean(vo.getIsElderly());
+        user.setIsElderly(Boolean.parseBoolean(vo.getIsElderly()));
         user.setName(vo.getName());
         user.setPassword(vo.getPassword());
         return user;
@@ -80,7 +82,7 @@ public class UserService extends ServiceImpl<UserMapper, User> {
         LinkedList<UserVO> vos = new LinkedList<>();
         for(User user:users){
             UserVO userVO = new UserVO();
-            userVO.setIsElderly(user.getIsElderly());
+            userVO.setIsElderly(user.getIsElderly().toString());
             userVO.setName(user.getName());
             vos.add(userVO);
         }
