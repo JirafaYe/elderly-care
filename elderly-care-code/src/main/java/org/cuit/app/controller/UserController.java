@@ -42,7 +42,7 @@ public class UserController {
         return R.fail("isElderly参数错误");
     }
 
-    @GetMapping("/login")
+    @PostMapping ("/login")
     public R login(@Valid @RequestBody UserVO userVO){
         return R.ok(userService.login(userVO));
     }

@@ -1,11 +1,8 @@
 package org.cuit.app.entity;
 
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.*;
 
 import java.util.Date;
-
-import com.baomidou.mybatisplus.annotation.TableId;
 
 import java.io.Serializable;
 
@@ -27,7 +24,7 @@ public class TodoList implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @TableId(value = "id", type = IdType.INPUT)
+    @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
 
     private String todo;
@@ -52,8 +49,10 @@ public class TodoList implements Serializable {
      */
     private Date date;
 
+    @TableField(fill = FieldFill.UPDATE)
     private Date updateTime;
 
+    @TableField(fill = FieldFill.INSERT)
     private Date createTime;
 
     private Date deleteTime;
