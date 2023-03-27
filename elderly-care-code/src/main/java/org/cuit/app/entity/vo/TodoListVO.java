@@ -9,6 +9,10 @@ import java.util.Date;
 
 @Data
 public class TodoListVO {
+    /**
+     * 主键
+     */
+    private Integer id;
 
     /**
      * 待做事项
@@ -17,10 +21,10 @@ public class TodoListVO {
     private String todo;
 
     /**
-     * 老人id
+     * 老人用户名
      */
     @NotNull
-    private Integer elderlyId;
+    private String  elderlyName;
 
     /**
      * 开始时间
