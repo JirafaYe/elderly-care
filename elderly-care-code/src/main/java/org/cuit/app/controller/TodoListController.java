@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.util.Date;
 
 /**
  * <p>
@@ -33,6 +34,10 @@ public class TodoListController {
     @PostMapping("/add")
     public R addTodoList(@RequestBody TodoListVO vo, HttpServletRequest request){
         User userInfo = (User) request.getAttribute(Constants.USER_ATTRIBUTE);
+        if(vo.getDate().before(new Date())
+                ||vo.getBegin()!=null&&(vo.getBegin().before(new Date())||vo.getBegin().before(vo.getDate()))){
+            return R.fail("时间不合法");
+        }
         if (userInfo.getIsElderly()) {
             todoListService.addTodoList(vo);
         } else {

@@ -39,10 +39,6 @@ public class TodoList implements Serializable {
      */
     private Date begin;
 
-    /**
-     * 结束时间
-     */
-    private Date end;
 
     /**
      * 事件日期

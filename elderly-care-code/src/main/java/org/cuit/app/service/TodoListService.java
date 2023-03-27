@@ -46,7 +46,6 @@ public class TodoListService extends ServiceImpl<TodoListMapper, TodoList> {
         todoList.setElderlyId(vo.getElderlyId());
         todoList.setDate(vo.getDate());
         todoList.setBegin(vo.getBegin());
-        todoList.setEnd(vo.getEnd());
         return todoList;
     }
 
