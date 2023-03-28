@@ -1,6 +1,7 @@
 package org.cuit.app.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import org.cuit.app.entity.TodoList;
 import org.cuit.app.entity.User;
 import org.cuit.app.entity.vo.TodoListVO;
@@ -14,6 +15,7 @@ import org.cuit.app.mapper.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -43,8 +45,18 @@ public class TodoListService extends ServiceImpl<TodoListMapper, TodoList> {
             throw new AppException("插入失败");
     }
 
-    //todo:可能更改异常类型
-    public List<TodoListVO> getTodoList(String elderlyName, Integer operator) {
+    public void updateTodoList(TodoListVO vo, Integer operator) {
+        TodoList list = convertToTodoList(vo);
+        if (operator != null) {
+            authorize(list.getElderlyId(), operator);
+        }
+        if (todoListMapper.update(list,new UpdateWrapper<TodoList>()
+                .eq("id",list.getId())
+                .isNull("delete_time")) != 1)
+            throw new AppException("修改失败");
+    }
+
+    public List<TodoListVO> getTodoList(String elderlyName, Integer operator, Date date) {
         User user = userMapper.selectByName(elderlyName);
         if (!user.getIsElderly()) {
             throw new AuthorizedException("不是老人，无操作权限");
@@ -52,7 +64,10 @@ public class TodoListService extends ServiceImpl<TodoListMapper, TodoList> {
         if (operator != null) {
             authorize(user.getId(), operator);
         }
-        List<TodoList> todoList = todoListMapper.selectList(new QueryWrapper<TodoList>().eq("elderly_id", user.getId()));
+        List<TodoList> todoList = todoListMapper.selectList(new QueryWrapper<TodoList>()
+                .eq("elderly_id", user.getId())
+                .eq("date",date)
+                .isNull("delete_time"));
         List<TodoListVO> vos = new LinkedList<>();
         for(TodoList list : todoList){
             vos.add(convertToTodoListVO(list));
@@ -60,8 +75,26 @@ public class TodoListService extends ServiceImpl<TodoListMapper, TodoList> {
         return vos;
     }
 
+    public void finishTodoList(Integer todoId,Boolean isElderly,Integer operator) {
+        Integer elderlyId = todoListMapper.selectById(todoId).getElderlyId();
+        if(!isElderly) {
+            authorize(elderlyId,operator);
+        }else {
+            if(!elderlyId.equals(operator))
+                throw new AuthorizedException("Invalid operator");
+        }
+
+        int update = todoListMapper.update(new TodoList()
+                , new UpdateWrapper<TodoList>().set("delete_time", new Date())
+                        .eq("id", todoId)
+                        .isNull("delete_time"));
+        if(update!=1)
+            throw new AppException("更新数据库失败");
+    }
+
     private TodoList convertToTodoList(TodoListVO vo) {
         TodoList todoList = new TodoList();
+        todoList.setId(vo.getId());
         todoList.setTodo(vo.getTodo());
         User user = userMapper.selectByName(vo.getElderlyName());
         if (user == null) {
@@ -69,14 +102,14 @@ public class TodoListService extends ServiceImpl<TodoListMapper, TodoList> {
         }
         todoList.setElderlyId(user.getId());
         todoList.setDate(vo.getDate());
-        todoList.setBegin(vo.getBegin());
+        todoList.setBeginTime(vo.getBegin());
         return todoList;
     }
 
     private TodoListVO convertToTodoListVO(TodoList list) {
         TodoListVO vo = new TodoListVO();
         vo.setTodo(list.getTodo());
-        vo.setBegin(list.getBegin());
+        vo.setBegin(list.getBeginTime());
         vo.setDate(list.getDate());
         vo.setId(list.getId());
         return vo;

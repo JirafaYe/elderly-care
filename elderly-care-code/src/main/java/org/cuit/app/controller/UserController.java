@@ -56,5 +56,14 @@ public class UserController {
         return R.ok(userService.reset(userInfo,password));
     }
 
+    @GetMapping("/identity")
+    public R getIndentity(HttpServletRequest request){
+        User userInfo = (User) request.getAttribute(Constants.USER_ATTRIBUTE);
+        UserVO userVO = new UserVO();
+        userVO.setName(userInfo.getName());
+        userVO.setIsElderly(userInfo.getIsElderly().toString());
+        return R.ok(userVO);
+    }
+
 }
 
