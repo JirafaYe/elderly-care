@@ -43,6 +43,7 @@ public class TodoListService extends ServiceImpl<TodoListMapper, TodoList> {
             throw new AppException("插入失败");
     }
 
+    //todo:可能更改异常类型
     public List<TodoListVO> getTodoList(String elderlyName, Integer operator) {
         User user = userMapper.selectByName(elderlyName);
         if (!user.getIsElderly()) {

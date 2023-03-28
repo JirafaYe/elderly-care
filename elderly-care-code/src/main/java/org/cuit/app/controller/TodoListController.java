@@ -47,14 +47,17 @@ public class TodoListController {
         return R.ok();
     }
 
+    //todo:增加分页
+    //todo:增加日期筛选
     @GetMapping("/get")
-    public R getTodoList(@Param("username") String username, HttpServletRequest request) {
-        if(StringUtils.isBlank(username))
-        {
-            return R.fail("username不能为空");
-        }
+    public R getTodoList(String username, HttpServletRequest request) {
         User userInfo = (User) request.getAttribute(Constants.USER_ATTRIBUTE);
-        List<TodoListVO> todoList = todoListService.getTodoList(username, userInfo.getIsElderly() ? null : userInfo.getId());
+        if(username!=null&&userInfo.getIsElderly()&&!userInfo.getName().equals(username)){
+            return R.fail("无查看权限");
+        }
+        List<TodoListVO> todoList =
+                todoListService.getTodoList(StringUtils.isBlank(username)?userInfo.getName():username
+                        , userInfo.getIsElderly() ? null : userInfo.getId());
         return R.ok(todoList);
     }
 
