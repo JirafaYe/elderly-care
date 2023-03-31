@@ -72,14 +72,14 @@ public class TodoListController {
     }
 
     @GetMapping("/get")
-    public R getTodoList(@Param("date") @DateTimeFormat(pattern = "yyyy-MM-dd") Date date, String username, HttpServletRequest request) {
+    public R getTodoList( String username, HttpServletRequest request) {
         User userInfo = (User) request.getAttribute(Constants.USER_ATTRIBUTE);
         if(!StringUtils.isBlank(username)&&userInfo.getIsElderly()&&!userInfo.getName().equals(username)){
             return R.fail("无查看权限");
         }
         List<TodoListVO> todoList =
                 todoListService.getTodoList(StringUtils.isBlank(username)?userInfo.getName():username
-                        , userInfo.getIsElderly() ? null : userInfo.getId(),date);
+                        , userInfo.getIsElderly() ? null : userInfo.getId());
         return R.ok(todoList);
     }
 

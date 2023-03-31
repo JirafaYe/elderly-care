@@ -56,7 +56,8 @@ public class TodoListService extends ServiceImpl<TodoListMapper, TodoList> {
             throw new AppException("修改失败");
     }
 
-    public List<TodoListVO> getTodoList(String elderlyName, Integer operator, Date date) {
+//    public List<TodoListVO> getTodoList(String elderlyName, Integer operator, Date date) {}
+public List<TodoListVO> getTodoList(String elderlyName, Integer operator) {
         User user = userMapper.selectByName(elderlyName);
         if (!user.getIsElderly()) {
             throw new AuthorizedException("不是老人，无操作权限");
@@ -66,7 +67,7 @@ public class TodoListService extends ServiceImpl<TodoListMapper, TodoList> {
         }
         List<TodoList> todoList = todoListMapper.selectList(new QueryWrapper<TodoList>()
                 .eq("elderly_id", user.getId())
-                .eq("date",date)
+//                .eq("date",date)
                 .isNull("delete_time"));
         List<TodoListVO> vos = new LinkedList<>();
         for(TodoList list : todoList){
