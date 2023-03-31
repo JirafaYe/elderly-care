@@ -24,7 +24,6 @@ public class TodoListVO {
     /**
      * 老人用户名
      */
-    @NotNull
     private String  elderlyName;
 
     /**

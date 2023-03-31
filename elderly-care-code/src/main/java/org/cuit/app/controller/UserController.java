@@ -57,7 +57,7 @@ public class UserController {
     }
 
     @GetMapping("/identity")
-    public R getIndentity(HttpServletRequest request){
+    public R identity(HttpServletRequest request){
         User userInfo = (User) request.getAttribute(Constants.USER_ATTRIBUTE);
         UserVO userVO = new UserVO();
         userVO.setName(userInfo.getName());

@@ -41,6 +41,10 @@ public class TodoListController {
                 || vo.getBegin() != null && (vo.getBegin().before(new Date()) || vo.getBegin().before(vo.getDate()))) {
             return R.fail("时间不合法");
         }
+        vo.setElderlyName(userInfo.getIsElderly()?userInfo.getName():vo.getElderlyName());
+        if(StringUtils.isBlank(vo.getElderlyName())) {
+            return R.fail("elderlyName为空");
+        }
         todoListService.updateTodoList(vo, userInfo.getIsElderly() ? null : userInfo.getId());
         return R.ok();
     }
@@ -51,6 +55,10 @@ public class TodoListController {
         if (vo.getDate().before(new Date())
                 || vo.getBegin() != null && (vo.getBegin().before(new Date()) || vo.getBegin().before(vo.getDate()))) {
             return R.fail("时间不合法");
+        }
+        vo.setElderlyName(userInfo.getIsElderly()?userInfo.getName():vo.getElderlyName());
+        if(StringUtils.isBlank(vo.getElderlyName())) {
+            return R.fail("elderlyName为空");
         }
         todoListService.addTodoList(vo, userInfo.getIsElderly() ? null : userInfo.getId());
         return R.ok();
