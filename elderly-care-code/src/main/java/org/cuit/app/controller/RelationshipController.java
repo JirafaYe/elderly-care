@@ -5,12 +5,10 @@ import lombok.AllArgsConstructor;
 import org.apache.ibatis.annotations.Param;
 import org.cuit.app.constant.Constants;
 import org.cuit.app.entity.User;
-import org.cuit.app.entity.vo.CheckBindingVO;
 import org.cuit.app.entity.vo.UserVO;
 import org.cuit.app.exception.AuthorizedException;
 import org.cuit.app.service.RelationshipService;
 import org.cuit.app.utils.R;
-import org.cuit.app.webSocket.CheckBindingWebSocket;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.websocket.EncodeException;
 import java.io.IOException;
 import java.util.List;
 

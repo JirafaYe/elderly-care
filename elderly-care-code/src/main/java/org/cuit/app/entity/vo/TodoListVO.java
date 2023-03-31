@@ -6,6 +6,7 @@ import lombok.ToString;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Data
@@ -29,6 +30,7 @@ public class TodoListVO {
     /**
      * 开始时间
      */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date begin;
 
 

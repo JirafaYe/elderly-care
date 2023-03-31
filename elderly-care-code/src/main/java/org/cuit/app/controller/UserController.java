@@ -11,6 +11,7 @@ import org.cuit.app.entity.vo.UserVO;
 import org.cuit.app.exception.AuthorizedException;
 import org.cuit.app.service.UserService;
 import org.cuit.app.utils.R;
+import org.cuit.app.utils.WebSocketUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -63,6 +64,15 @@ public class UserController {
         userVO.setName(userInfo.getName());
         userVO.setIsElderly(userInfo.getIsElderly().toString());
         return R.ok(userVO);
+    }
+
+    @GetMapping("/sos")
+    public R sos(HttpServletRequest request){
+        User user = (User) request.getAttribute(Constants.USER_ATTRIBUTE);
+        if (!user.getIsElderly()){
+            throw new AuthorizedException("无操作权限");
+        }
+        return R.ok();
     }
 
 }

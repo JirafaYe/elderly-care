@@ -12,7 +12,8 @@ import org.cuit.app.mapper.RelationshipMapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.AllArgsConstructor;
 import org.cuit.app.mapper.UserMapper;
-import org.cuit.app.webSocket.CheckBindingWebSocket;
+import org.cuit.app.utils.WebSocketUtils;
+import org.cuit.app.webSocket.NotifyElderlyWebSocket;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionTemplate;
 
@@ -52,7 +53,7 @@ public class RelationshipService extends ServiceImpl<RelationshipMapper, Relatio
 
     public void notifyBinding(User binder,User elderly) throws IOException {
         List<UserVO> userVOS = userService.convertToUserVO(binder, elderly);
-        CheckBindingWebSocket.sendMsg(elderly.getId(),new CheckBindingVO(userVOS.get(0),userVOS.get(1)));
+        WebSocketUtils.sendMsg(WebSocketUtils.getElderlyConnection(),elderly.getId(),new CheckBindingVO(userVOS.get(0),userVOS.get(1)));
     }
 
     public void checkBinding(boolean isPermissible,Integer elderlyId,String binderName){

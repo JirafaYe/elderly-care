@@ -35,10 +35,8 @@ public class TodoListController {
     //todo:优化
     @PostMapping("/update")
     public R updateTodoList(@Valid @RequestBody TodoListVO vo,HttpServletRequest request){
-        System.out.println(vo);
         User userInfo = (User) request.getAttribute(Constants.USER_ATTRIBUTE);
-        if (vo.getDate().before(new Date())
-                || vo.getBegin() != null && (vo.getBegin().before(new Date()) || vo.getBegin().before(vo.getDate()))) {
+        if (vo.getDate().before(new Date())||vo.getBegin()!=null&&vo.getBegin().before(vo.getDate())) {
             return R.fail("时间不合法");
         }
         vo.setElderlyName(userInfo.getIsElderly()?userInfo.getName():vo.getElderlyName());
@@ -52,10 +50,12 @@ public class TodoListController {
     @PostMapping("/add")
     public R addTodoList(@RequestBody TodoListVO vo, HttpServletRequest request) {
         User userInfo = (User) request.getAttribute(Constants.USER_ATTRIBUTE);
-        if (vo.getDate().before(new Date())
-                || vo.getBegin() != null && (vo.getBegin().before(new Date()) || vo.getBegin().before(vo.getDate()))) {
+
+
+        if (vo.getDate().before(new Date())||vo.getBegin()!=null&&vo.getBegin().before(vo.getDate())) {
             return R.fail("时间不合法");
         }
+
         vo.setElderlyName(userInfo.getIsElderly()?userInfo.getName():vo.getElderlyName());
         if(StringUtils.isBlank(vo.getElderlyName())) {
             return R.fail("elderlyName为空");
