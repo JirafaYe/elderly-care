@@ -10,11 +10,14 @@ import org.cuit.app.entity.User;
 import org.cuit.app.entity.vo.TodoListVO;
 import org.cuit.app.service.TodoListService;
 import org.cuit.app.utils.R;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
+
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -36,7 +39,7 @@ public class TodoListController {
     @PostMapping("/update")
     public R updateTodoList(@Valid @RequestBody TodoListVO vo,HttpServletRequest request){
         User userInfo = (User) request.getAttribute(Constants.USER_ATTRIBUTE);
-        if (vo.getDate().before(new Date())||vo.getBegin()!=null&&vo.getBegin().before(vo.getDate())) {
+        if (vo.getDate().before(Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant())) || ((vo.getBegin() != null) && vo.getBegin().before(vo.getDate()))) {
             return R.fail("时间不合法");
         }
         vo.setElderlyName(userInfo.getIsElderly()?userInfo.getName():vo.getElderlyName());
@@ -51,8 +54,7 @@ public class TodoListController {
     public R addTodoList(@RequestBody TodoListVO vo, HttpServletRequest request) {
         User userInfo = (User) request.getAttribute(Constants.USER_ATTRIBUTE);
 
-
-        if (vo.getDate().before(new Date())||vo.getBegin()!=null&&vo.getBegin().before(vo.getDate())) {
+        if (vo.getDate().before(Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant())) || ((vo.getBegin() != null) && vo.getBegin().before(vo.getDate()))) {
             return R.fail("时间不合法");
         }
 
