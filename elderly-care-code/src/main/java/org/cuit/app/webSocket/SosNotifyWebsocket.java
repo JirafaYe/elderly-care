@@ -41,7 +41,7 @@ public class SosNotifyWebsocket{
     @OnOpen
     public void onOpen(Session session, @PathParam("token") String token) {
         user = tokenService.parseToken(token);
-        if(!user.getIsElderly()){
+        if(user.getIsElderly()){
             throw new AuthorizedException("不是监护人,非法连接");
         }
         if (!WebSocketUtils.getGuardianConnection().containsKey(user.getId())) {

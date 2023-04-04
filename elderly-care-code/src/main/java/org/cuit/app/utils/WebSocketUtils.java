@@ -2,12 +2,14 @@ package org.cuit.app.utils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import lombok.extern.slf4j.Slf4j;
 import org.cuit.app.exception.AppException;
 
 import javax.websocket.Session;
 import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
 
+@Slf4j
 public class WebSocketUtils {
     /**
      * 用于存所有的连接服务的 老人客户端
@@ -22,8 +24,11 @@ public class WebSocketUtils {
 
     public static void sendMsg(ConcurrentHashMap<Integer, Session> connectionMap, Integer userId, Object vo) throws IOException {
         Session id = connectionMap.get(userId);
-        if (id == null)
-            throw new AppException("websocket unconnected");
+        if (id == null) {
+//            throw new AppException("websocket unconnected");
+            log.error("websocket unconnected");
+            return;
+        }
         id.getBasicRemote().sendText(new ObjectMapper().writeValueAsString(R.ok(vo, "type:" + vo.getClass().getSimpleName())));
     }
 

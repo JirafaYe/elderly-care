@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-
+import java.io.IOException;
 
 
 /**
@@ -66,12 +66,14 @@ public class UserController {
         return R.ok(userVO);
     }
 
-    @GetMapping("/sos")
-    public R sos(HttpServletRequest request){
+    @PostMapping("/sos")
+    public R sos(@Param("message") String message,HttpServletRequest request) throws IOException {
         User user = (User) request.getAttribute(Constants.USER_ATTRIBUTE);
-        if (!user.getIsElderly()){
+        log.info(message);
+        if(!user.getIsElderly()){
             throw new AuthorizedException("无操作权限");
         }
+        userService.sos(user.getName(),message);
         return R.ok();
     }
 

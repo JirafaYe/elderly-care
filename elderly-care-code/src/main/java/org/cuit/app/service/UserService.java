@@ -1,17 +1,23 @@
 package org.cuit.app.service;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.sun.org.apache.xpath.internal.operations.Bool;
+import lombok.extern.slf4j.Slf4j;
 import org.cuit.app.entity.User;
+import org.cuit.app.entity.vo.SosMessageVO;
 import org.cuit.app.entity.vo.UserVO;
 import org.cuit.app.exception.AuthorizedException;
 import org.cuit.app.exception.LoginException;
+import org.cuit.app.mapper.RelationshipMapper;
 import org.cuit.app.mapper.UserMapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.AllArgsConstructor;
 import org.cuit.app.utils.EncrypDES;
+import org.cuit.app.utils.WebSocketUtils;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -25,11 +31,23 @@ import java.util.Map;
  * @since 2023-03-14
  */
 @Service
+@Slf4j
 @AllArgsConstructor
 public class UserService extends ServiceImpl<UserMapper, User> {
     private final TokenService tokenService;
 
     private final UserMapper userMapper;
+
+    private final RelationshipMapper relationshipMapper;
+
+    public void sos(String elderlyName,String message) throws IOException {
+        List<Integer> binder = relationshipMapper.getBinder(userMapper.selectByName(elderlyName).getId());
+        SosMessageVO sosMessageVO = new SosMessageVO(message,elderlyName);
+        log.info(sosMessageVO.toString());
+        for (User user : userMapper.selectBatchIds(binder)) {
+            WebSocketUtils.sendMsg(WebSocketUtils.getGuardianConnection(),user.getId(),sosMessageVO);
+        }
+    }
 
     public Map<String, Object> signUp(UserVO vo){
         //密码加密
