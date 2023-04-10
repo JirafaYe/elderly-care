@@ -65,7 +65,7 @@ public class RelationshipController {
         }else {
             voList=relationshipService.getElderly(userInfo.getId());
         }
-        return R.ok(voList);
+        return R.ok(voList.get(0));
     }
 }
 

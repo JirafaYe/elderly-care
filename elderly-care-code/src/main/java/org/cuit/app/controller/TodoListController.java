@@ -67,9 +67,9 @@ public class TodoListController {
     }
 
     @PostMapping("/finish")
-    public R finishTodoList(@Param("id") Integer id ,HttpServletRequest request) {
+    public R finishTodoList(@Param("id") String  id ,HttpServletRequest request) {
         User userInfo = (User) request.getAttribute(Constants.USER_ATTRIBUTE);
-        todoListService.finishTodoList(id,userInfo.getIsElderly(),userInfo.getId());
+        todoListService.finishTodoList(Integer.parseInt(id),userInfo.getIsElderly(),userInfo.getId());
         return R.ok();
     }
 

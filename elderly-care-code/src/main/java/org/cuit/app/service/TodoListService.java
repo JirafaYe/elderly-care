@@ -95,7 +95,7 @@ public List<TodoListVO> getTodoList(String elderlyName, Integer operator) {
 
     private TodoList convertToTodoList(TodoListVO vo) {
         TodoList todoList = new TodoList();
-        todoList.setId(vo.getId());
+        todoList.setId(Integer.parseInt(vo.getId()));
         todoList.setTodo(vo.getTodo());
         User user = userMapper.selectByName(vo.getElderlyName());
         if (user == null) {
@@ -112,7 +112,7 @@ public List<TodoListVO> getTodoList(String elderlyName, Integer operator) {
         vo.setTodo(list.getTodo());
         vo.setBegin(list.getBeginTime());
         vo.setDate(list.getDate());
-        vo.setId(list.getId());
+        vo.setId(list.getId().toString());
         return vo;
     }
 
