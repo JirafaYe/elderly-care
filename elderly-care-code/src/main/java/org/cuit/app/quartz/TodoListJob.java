@@ -20,6 +20,7 @@ public class TodoListJob extends QuartzJobBean {
         TodoListVO todoListVO = (TodoListVO) context.getJobDetail().getJobDataMap().get("list");
         Integer id = (Integer) context.getJobDetail().getJobDataMap().get("elderly");
         log.info("定时任务推送todo-list");
+        System.out.println(todoListVO);
 
         System.out.println(id);
 

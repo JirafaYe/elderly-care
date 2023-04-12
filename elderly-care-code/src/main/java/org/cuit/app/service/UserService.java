@@ -1,8 +1,6 @@
 package org.cuit.app.service;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import lombok.extern.slf4j.Slf4j;
 import org.cuit.app.entity.User;
 import org.cuit.app.entity.vo.SosMessageVO;

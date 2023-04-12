@@ -17,6 +17,7 @@ import org.cuit.app.mapper.UserMapper;
 import org.cuit.app.utils.DateUtils;
 import org.quartz.*;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -43,25 +44,47 @@ public class TodoListService extends ServiceImpl<TodoListMapper, TodoList> {
 
     private final Scheduler scheduler;
 
-    public void addTodoList(TodoListVO vo, Integer operator) throws SchedulerException {
+    private final TransactionTemplate transactionTemplate;
+
+    public void addTodoList(TodoListVO vo, Integer operator) {
         TodoList list = convertToTodoList(vo);
         if (operator != null) {
             authorize(list.getElderlyId(), operator);
         }
-        if (todoListMapper.insert(list) != 1)
-            throw new AppException("插入失败");
-        setQuartzJob(vo,list.getId(),list.getElderlyId());
+        transactionTemplate.execute(status ->{
+            if (todoListMapper.insert(list) != 1)
+                throw new AppException("插入失败");
+
+            vo.setId(list.getId().toString());
+            try {
+                setQuartzJob(vo,list.getElderlyId());
+            } catch (SchedulerException e) {
+                throw new RuntimeException(e);
+            }
+            return null;
+        });
+
     }
 
-    public void updateTodoList(TodoListVO vo, Integer operator) {
+    public void updateTodoList(TodoListVO vo, Integer operator) throws SchedulerException {
         TodoList list = convertToTodoList(vo);
         if (operator != null) {
             authorize(list.getElderlyId(), operator);
         }
-        if (todoListMapper.update(list,new UpdateWrapper<TodoList>()
-                .eq("id",list.getId())
-                .isNull("delete_time")) != 1)
-            throw new AppException("修改失败");
+
+        transactionTemplate.execute(status ->{
+            if (todoListMapper.update(list,new UpdateWrapper<TodoList>()
+                    .eq("id",list.getId())
+                    .isNull("delete_time")) != 1)
+                throw new AppException("修改失败");
+            try {
+                setQuartzJob(vo,list.getElderlyId());
+            } catch (SchedulerException e) {
+                throw new RuntimeException(e);
+            }
+
+            return null;
+        });
     }
 
     public List<TodoListVO> getTodoList(String elderlyName, Integer operator) {
@@ -100,8 +123,8 @@ public class TodoListService extends ServiceImpl<TodoListMapper, TodoList> {
             throw new AppException("更新数据库失败");
     }
 
-    private void setQuartzJob(TodoListVO vo,Integer listId,Integer elderlyId) throws SchedulerException {
-        JobKey jobKey = new JobKey(listId.toString());
+    private void setQuartzJob(TodoListVO vo,Integer elderlyId) throws SchedulerException {
+        JobKey jobKey = new JobKey(vo.getId());
         if(scheduler.checkExists(jobKey)){
             scheduler.deleteJob(jobKey);
         }
@@ -120,7 +143,7 @@ public class TodoListService extends ServiceImpl<TodoListMapper, TodoList> {
         CronScheduleBuilder cronScheduleBuilder = CronScheduleBuilder.cronSchedule(cron);
 
         CronTrigger  trigger = TriggerBuilder.newTrigger()
-                .withIdentity(TriggerKey.triggerKey(listId.toString()))
+                .withIdentity(TriggerKey.triggerKey(vo.getId()))
                 .withSchedule(cronScheduleBuilder).build();
         log.info("设置定时任务======>");
         scheduler.start();

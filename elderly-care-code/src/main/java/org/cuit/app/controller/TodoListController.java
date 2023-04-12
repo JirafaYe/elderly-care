@@ -39,7 +39,7 @@ public class TodoListController {
 
     //todo:优化
     @PostMapping("/update")
-    public R updateTodoList(@Valid @RequestBody TodoListVO vo, HttpServletRequest request) {
+    public R updateTodoList(@Valid @RequestBody TodoListVO vo, HttpServletRequest request) throws SchedulerException {
         User userInfo = (User) request.getAttribute(Constants.USER_ATTRIBUTE);
         Date date = Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant());
 
