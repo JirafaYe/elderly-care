@@ -10,11 +10,13 @@ import org.cuit.app.entity.User;
 import org.cuit.app.entity.vo.TodoListVO;
 import org.cuit.app.service.TodoListService;
 import org.cuit.app.utils.R;
+import org.quartz.SchedulerException;
 import org.springframework.web.bind.annotation.*;
 
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Calendar;
@@ -37,13 +39,17 @@ public class TodoListController {
 
     //todo:优化
     @PostMapping("/update")
-    public R updateTodoList(@Valid @RequestBody TodoListVO vo,HttpServletRequest request){
+    public R updateTodoList(@Valid @RequestBody TodoListVO vo, HttpServletRequest request) {
         User userInfo = (User) request.getAttribute(Constants.USER_ATTRIBUTE);
-        if (vo.getDate().before(Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant())) || ((vo.getBegin() != null) && vo.getBegin().before(vo.getDate()))) {
+        Date date = Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant());
+
+        if (vo.getDate().before(date)
+                || (vo.getBegin() != null && (vo.getBegin().before(vo.getDate()) || vo.getBegin().before(new Date())))) {
             return R.fail("时间不合法");
         }
-        vo.setElderlyName(userInfo.getIsElderly()?userInfo.getName():vo.getElderlyName());
-        if(StringUtils.isBlank(vo.getElderlyName())) {
+
+        vo.setElderlyName(userInfo.getIsElderly() ? userInfo.getName() : vo.getElderlyName());
+        if (StringUtils.isBlank(vo.getElderlyName())) {
             return R.fail("elderlyName为空");
         }
         todoListService.updateTodoList(vo, userInfo.getIsElderly() ? null : userInfo.getId());
@@ -51,15 +57,18 @@ public class TodoListController {
     }
 
     @PostMapping("/add")
-    public R addTodoList(@RequestBody TodoListVO vo, HttpServletRequest request) {
+    public R addTodoList(@RequestBody TodoListVO vo, HttpServletRequest request) throws SchedulerException {
         User userInfo = (User) request.getAttribute(Constants.USER_ATTRIBUTE);
 
-        if (vo.getDate().before(Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant())) || ((vo.getBegin() != null) && vo.getBegin().before(vo.getDate()))) {
+        Date date = Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant());
+
+        if (vo.getDate().before(date)
+                || (vo.getBegin() != null && (vo.getBegin().before(vo.getDate()) || vo.getBegin().before(new Date())))) {
             return R.fail("时间不合法");
         }
 
-        vo.setElderlyName(userInfo.getIsElderly()?userInfo.getName():vo.getElderlyName());
-        if(StringUtils.isBlank(vo.getElderlyName())) {
+        vo.setElderlyName(userInfo.getIsElderly() ? userInfo.getName() : vo.getElderlyName());
+        if (StringUtils.isBlank(vo.getElderlyName())) {
             return R.fail("elderlyName为空");
         }
         todoListService.addTodoList(vo, userInfo.getIsElderly() ? null : userInfo.getId());
@@ -67,20 +76,20 @@ public class TodoListController {
     }
 
     @PostMapping("/finish")
-    public R finishTodoList(@Param("id") String  id ,HttpServletRequest request) {
+    public R finishTodoList(@Param("id") String id, HttpServletRequest request) {
         User userInfo = (User) request.getAttribute(Constants.USER_ATTRIBUTE);
-        todoListService.finishTodoList(Integer.parseInt(id),userInfo.getIsElderly(),userInfo.getId());
+        todoListService.finishTodoList(Integer.parseInt(id), userInfo.getIsElderly(), userInfo.getId());
         return R.ok();
     }
 
     @GetMapping("/get")
-    public R getTodoList( String username, HttpServletRequest request) {
+    public R getTodoList(String username, HttpServletRequest request) {
         User userInfo = (User) request.getAttribute(Constants.USER_ATTRIBUTE);
-        if(!StringUtils.isBlank(username)&&userInfo.getIsElderly()&&!userInfo.getName().equals(username)){
+        if (!StringUtils.isBlank(username) && userInfo.getIsElderly() && !userInfo.getName().equals(username)) {
             return R.fail("无查看权限");
         }
         List<TodoListVO> todoList =
-                todoListService.getTodoList(StringUtils.isBlank(username)?userInfo.getName():username
+                todoListService.getTodoList(StringUtils.isBlank(username) ? userInfo.getName() : username
                         , userInfo.getIsElderly() ? null : userInfo.getId());
         return R.ok(todoList);
     }

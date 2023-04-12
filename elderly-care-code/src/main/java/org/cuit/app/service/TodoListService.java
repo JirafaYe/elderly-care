@@ -2,6 +2,8 @@ package org.cuit.app.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import lombok.extern.slf4j.Slf4j;
+import org.cuit.app.quartz.TodoListJob;
 import org.cuit.app.entity.TodoList;
 import org.cuit.app.entity.User;
 import org.cuit.app.entity.vo.TodoListVO;
@@ -12,10 +14,12 @@ import org.cuit.app.mapper.TodoListMapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.AllArgsConstructor;
 import org.cuit.app.mapper.UserMapper;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.cuit.app.utils.DateUtils;
+import org.quartz.*;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -27,6 +31,7 @@ import java.util.List;
  * @author Jirafa
  * @since 2023-03-24
  */
+@Slf4j
 @Service
 @AllArgsConstructor
 public class TodoListService extends ServiceImpl<TodoListMapper, TodoList> {
@@ -36,13 +41,16 @@ public class TodoListService extends ServiceImpl<TodoListMapper, TodoList> {
 
     private final UserMapper userMapper;
 
-    public void addTodoList(TodoListVO vo, Integer operator) {
+    private final Scheduler scheduler;
+
+    public void addTodoList(TodoListVO vo, Integer operator) throws SchedulerException {
         TodoList list = convertToTodoList(vo);
         if (operator != null) {
             authorize(list.getElderlyId(), operator);
         }
         if (todoListMapper.insert(list) != 1)
             throw new AppException("插入失败");
+        setQuartzJob(vo,list.getId(),list.getElderlyId());
     }
 
     public void updateTodoList(TodoListVO vo, Integer operator) {
@@ -56,8 +64,7 @@ public class TodoListService extends ServiceImpl<TodoListMapper, TodoList> {
             throw new AppException("修改失败");
     }
 
-//    public List<TodoListVO> getTodoList(String elderlyName, Integer operator, Date date) {}
-public List<TodoListVO> getTodoList(String elderlyName, Integer operator) {
+    public List<TodoListVO> getTodoList(String elderlyName, Integer operator) {
         User user = userMapper.selectByName(elderlyName);
         if (!user.getIsElderly()) {
             throw new AuthorizedException("不是老人，无操作权限");
@@ -93,9 +100,37 @@ public List<TodoListVO> getTodoList(String elderlyName, Integer operator) {
             throw new AppException("更新数据库失败");
     }
 
+    private void setQuartzJob(TodoListVO vo,Integer listId,Integer elderlyId) throws SchedulerException {
+        JobKey jobKey = new JobKey(listId.toString());
+        if(scheduler.checkExists(jobKey)){
+            scheduler.deleteJob(jobKey);
+        }
+
+        HashMap<String , Object> map = new HashMap<>();
+        map.put("list",vo);
+        map.put("elderly",elderlyId);
+
+        JobDetail jobDetail = JobBuilder.newJob(TodoListJob.class)
+                .withIdentity(jobKey)
+                .setJobData(new JobDataMap(map))
+                .build();
+
+        String cron = DateUtils.getCron(vo.getBegin() == null ? vo.getDate() : vo.getBegin());
+
+        CronScheduleBuilder cronScheduleBuilder = CronScheduleBuilder.cronSchedule(cron);
+
+        CronTrigger  trigger = TriggerBuilder.newTrigger()
+                .withIdentity(TriggerKey.triggerKey(listId.toString()))
+                .withSchedule(cronScheduleBuilder).build();
+        log.info("设置定时任务======>");
+        scheduler.start();
+        scheduler.scheduleJob(jobDetail,trigger);
+    }
+
     private TodoList convertToTodoList(TodoListVO vo) {
         TodoList todoList = new TodoList();
-        todoList.setId(Integer.parseInt(vo.getId()));
+        if(vo.getId() != null)
+            todoList.setId(Integer.parseInt(vo.getId()));
         todoList.setTodo(vo.getTodo());
         User user = userMapper.selectByName(vo.getElderlyName());
         if (user == null) {
