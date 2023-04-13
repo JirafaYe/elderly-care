@@ -42,6 +42,12 @@ public class RelationshipService extends ServiceImpl<RelationshipMapper, Relatio
 
     private final TransactionTemplate transactionTemplate;
 
+    /**
+     * 监护人发起关系绑定请求，设置redis相关数据，并使用websocket向老人端推送关系绑定请求
+     * @param bindingUser 发起者
+     * @param elderlyName 老人
+     * @throws IOException
+     */
     public void bindElderly(User bindingUser,String elderlyName) throws IOException {
         User user = userMapper.selectByName(elderlyName);
         if(user == null){
@@ -51,11 +57,23 @@ public class RelationshipService extends ServiceImpl<RelationshipMapper, Relatio
         notifyBinding(bindingUser,user);
     }
 
+    /**
+     * 使用websocket推送绑定通知
+     * @param binder 发起者
+     * @param elderly 老人
+     * @throws IOException
+     */
     public void notifyBinding(User binder,User elderly) throws IOException {
         List<UserVO> userVOS = userService.convertToUserVO(binder, elderly);
         WebSocketUtils.sendMsg(WebSocketUtils.getElderlyConnection(),elderly.getId(),new CheckBindingVO(userVOS.get(0),userVOS.get(1)));
     }
 
+    /**
+     * 老人进行确定关系绑定
+     * @param isPermissible 是否同意
+     * @param elderlyId 老人id
+     * @param binderName 发起绑定的监护人用户名
+     */
     public void checkBinding(boolean isPermissible,Integer elderlyId,String binderName){
         if(isPermissible){
             String elderlyName = redisService.getCacheMapValue(CacheConstant.BINDING_MAP, binderName);
@@ -76,6 +94,11 @@ public class RelationshipService extends ServiceImpl<RelationshipMapper, Relatio
         }
     }
 
+    /**
+     * 老人获取绑定的监护人列表
+     * @param elderlyId 老人id
+     * @return 监护人列表
+     */
     public List<UserVO> getBinder(Integer elderlyId){
         List<Integer> binders = relationshipMapper.getBinder(elderlyId);
         User[] users = new User[binders.size()];
@@ -85,6 +108,11 @@ public class RelationshipService extends ServiceImpl<RelationshipMapper, Relatio
         return userService.convertToUserVO(users);
     }
 
+    /**
+     * 获取绑定的老人列表
+     * @param id 监护人id
+     * @return 绑定的老人列表
+     */
     public List<UserVO> getElderly(Integer id){
         List<Integer> elderly = relationshipMapper.getElderly(id);
         User[] users = new User[elderly.size()];

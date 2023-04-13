@@ -13,9 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * <p>
  * Token服务类
- * </p>
  *
  * @author jirafa
  * @since 2023-03-14
@@ -29,6 +27,7 @@ public class TokenService {
 
     /**
      * 创建令牌
+     *
      * @param user
      * @return
      */
@@ -45,6 +44,12 @@ public class TokenService {
         return res;
     }
 
+    /**
+     * 解析token
+     *
+     * @param token
+     * @return User
+     */
     public User parseToken(String token) {
         if (!StringUtils.isBlank(token)) {
             User user = new User();

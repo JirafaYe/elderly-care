@@ -3,6 +3,9 @@ package org.cuit.app.utils;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+/**
+ * 将date转换为cron表达式
+ */
 public class DateUtils {
     /**
      *  功能描述：日期转换cron表达式

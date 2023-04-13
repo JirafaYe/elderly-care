@@ -11,6 +11,10 @@ import java.io.IOException;
 import java.util.TimeZone;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * websocket工具类
+ *
+ */
 @Slf4j
 public class WebSocketUtils{
     /**

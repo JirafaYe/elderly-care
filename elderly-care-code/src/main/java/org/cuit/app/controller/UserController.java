@@ -20,9 +20,7 @@ import java.io.IOException;
 
 
 /**
- * <p>
- *  前端控制器
- * </p>
+ * 用户相关请求处理
  *
  * @author jirafa
  * @since 2023-03-14
@@ -35,6 +33,12 @@ public class UserController {
 
     private final UserService userService;
 
+    /**
+     * 用户注册，返回token
+     *
+     * @param userVO
+     * @return
+     */
     @PostMapping("/sign-up")
     public R signUp(@Valid @RequestBody UserVO userVO){
         if(userVO.getIsElderly().equals("true")||userVO.getIsElderly().equals("false")){
@@ -43,11 +47,24 @@ public class UserController {
         return R.fail("isElderly参数错误");
     }
 
+    /**
+     * 用户登录，返回token
+     *
+     * @param userVO
+     * @return
+     */
     @PostMapping ("/login")
     public R login(@Valid @RequestBody UserVO userVO){
         return R.ok(userService.login(userVO));
     }
 
+    /**
+     * 重置密码
+     *
+     * @param password
+     * @param request
+     * @return
+     */
     @PostMapping("/reset")
     public R resetPassword(@Param("password") String password, HttpServletRequest request){
         if(StringUtils.isBlank(password)){
@@ -57,6 +74,12 @@ public class UserController {
         return R.ok(userService.reset(userInfo,password));
     }
 
+    /**
+     * 获取用户信息
+     *
+     * @param request
+     * @return
+     */
     @GetMapping("/identity")
     public R identity(HttpServletRequest request){
         User userInfo = (User) request.getAttribute(Constants.USER_ATTRIBUTE);
@@ -66,6 +89,14 @@ public class UserController {
         return R.ok(userVO);
     }
 
+    /**
+     * 发出求救信号
+     *
+     * @param message
+     * @param request
+     * @return
+     * @throws IOException
+     */
     @PostMapping("/sos")
     public R sos(@Param("message") String message,HttpServletRequest request) throws IOException {
         User user = (User) request.getAttribute(Constants.USER_ATTRIBUTE);

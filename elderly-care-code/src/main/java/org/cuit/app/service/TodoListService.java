@@ -46,11 +46,19 @@ public class TodoListService extends ServiceImpl<TodoListMapper, TodoList> {
 
     private final TransactionTemplate transactionTemplate;
 
+    /**
+     * 添加todolist
+     *
+     * @param vo
+     * @param operator
+     */
     public void addTodoList(TodoListVO vo, Integer operator) {
         TodoList list = convertToTodoList(vo);
         if (operator != null) {
             authorize(list.getElderlyId(), operator);
         }
+
+        //将sql操作和设置定时任务包装成事务操作
         transactionTemplate.execute(status ->{
             if (todoListMapper.insert(list) != 1)
                 throw new AppException("插入失败");
@@ -66,12 +74,20 @@ public class TodoListService extends ServiceImpl<TodoListMapper, TodoList> {
 
     }
 
+    /**
+     * 更新todolist
+     *
+     * @param vo
+     * @param operator
+     * @throws SchedulerException
+     */
     public void updateTodoList(TodoListVO vo, Integer operator) throws SchedulerException {
         TodoList list = convertToTodoList(vo);
         if (operator != null) {
             authorize(list.getElderlyId(), operator);
         }
 
+        //将sql操作和设置定时任务包装成事务操作
         transactionTemplate.execute(status ->{
             if (todoListMapper.update(list,new UpdateWrapper<TodoList>()
                     .eq("id",list.getId())
@@ -87,6 +103,13 @@ public class TodoListService extends ServiceImpl<TodoListMapper, TodoList> {
         });
     }
 
+    /**
+     * 进行todolist获取
+     *
+     * @param elderlyName 老人名字
+     * @param operator 操作人id
+     * @return
+     */
     public List<TodoListVO> getTodoList(String elderlyName, Integer operator) {
         User user = userMapper.selectByName(elderlyName);
         if (!user.getIsElderly()) {
@@ -106,6 +129,13 @@ public class TodoListService extends ServiceImpl<TodoListMapper, TodoList> {
         return vos;
     }
 
+    /**
+     * 完成todolist
+     *
+     * @param todoId todolist的id
+     * @param isElderly 操作人是否是老人
+     * @param operator 操作人id
+     */
     public void finishTodoList(Integer todoId,Boolean isElderly,Integer operator) {
         Integer elderlyId = todoListMapper.selectById(todoId).getElderlyId();
         if(!isElderly) {
@@ -123,6 +153,13 @@ public class TodoListService extends ServiceImpl<TodoListMapper, TodoList> {
             throw new AppException("更新数据库失败");
     }
 
+    /**
+     * 设置定时任务
+     *
+     * @param vo 需要推送的todolist
+     * @param elderlyId todolist对应的老人
+     * @throws SchedulerException quartz任务设置可能抛出的异常
+     */
     private void setQuartzJob(TodoListVO vo,Integer elderlyId) throws SchedulerException {
         JobKey jobKey = new JobKey(vo.getId());
         if(scheduler.checkExists(jobKey)){
@@ -150,6 +187,12 @@ public class TodoListService extends ServiceImpl<TodoListMapper, TodoList> {
         scheduler.scheduleJob(jobDetail,trigger);
     }
 
+    /**
+     * 将vo转换成todolist类型
+     *
+     * @param vo
+     * @return
+     */
     private TodoList convertToTodoList(TodoListVO vo) {
         TodoList todoList = new TodoList();
         if(vo.getId() != null)
@@ -165,6 +208,12 @@ public class TodoListService extends ServiceImpl<TodoListMapper, TodoList> {
         return todoList;
     }
 
+    /**
+     * 转换成todolistVO类型
+     *
+     * @param list
+     * @return
+     */
     private TodoListVO convertToTodoListVO(TodoList list) {
         TodoListVO vo = new TodoListVO();
         vo.setTodo(list.getTodo());
@@ -174,6 +223,12 @@ public class TodoListService extends ServiceImpl<TodoListMapper, TodoList> {
         return vo;
     }
 
+    /**
+     * 通过绑定关系判断监护人是否有操作权限
+     *
+     * @param elderlyId 老人id
+     * @param operator 操作人id（监护人身份）
+     */
     private void authorize(Integer elderlyId, Integer operator) {
         List<Integer> binders = relationshipMapper.getBinder(elderlyId);
         if (!binders.contains(operator))

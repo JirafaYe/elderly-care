@@ -91,12 +91,7 @@
                 <version>${velocity.version}</version>
             </dependency>
 
-<!--            <dependency>-->
-<!--                <groupId>org.mybatis.generator</groupId>-->
-<!--                <artifactId>mybatis-generator-core</artifactId>-->
-<!--                <version>${mybatis-generator}</version>-->
-<!--            </dependency>-->
-            <!--druid连接池-->
+
             <dependency>
                 <groupId>com.alibaba</groupId>
                 <artifactId>druid-spring-boot-starter</artifactId>
@@ -129,11 +124,6 @@
                         <encoding>${project.build.sourceEncoding}</encoding>
                     </configuration>
                     <version>3.9.0</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.mybatis.generator</groupId>
-                    <artifactId>mybatis-generator-maven-plugin</artifactId>
-                    <version>${mybatis-generator}</version>
                 </plugin>
             </plugins>
         </pluginManagement>

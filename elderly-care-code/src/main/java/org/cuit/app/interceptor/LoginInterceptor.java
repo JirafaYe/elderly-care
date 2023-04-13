@@ -16,6 +16,9 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+/**
+ * 登录拦截器
+ */
 @Component
 @AllArgsConstructor
 @Slf4j
@@ -23,6 +26,15 @@ public class LoginInterceptor implements HandlerInterceptor {
 
     private final TokenService tokenService;
 
+    /**
+     * 解析token获取登录的用户信息
+     *
+     * @param request
+     * @param response
+     * @param handler
+     * @return
+     * @throws Exception
+     */
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         //从请求头中获取Authorization

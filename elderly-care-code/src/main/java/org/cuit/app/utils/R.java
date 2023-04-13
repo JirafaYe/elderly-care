@@ -6,7 +6,7 @@ import org.cuit.app.constant.Constants;
 import java.io.Serializable;
 
 /**
- * 相应封装
+ * 统一返回响应封装
  *
  * @author jirafa
  */
