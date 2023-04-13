@@ -10,10 +10,12 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import javax.websocket.OnClose;
+import javax.websocket.OnError;
 import javax.websocket.OnOpen;
 import javax.websocket.Session;
 import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
+import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -50,9 +52,23 @@ public class SosNotifyWebsocket{
         log.info("isOpen:=" + session.getRequestURI().toString());
     }
 
+    @OnError
+    public void onError(Session session,Throwable throwable) {
+        throwable.printStackTrace();
+        try {
+            WebSocketUtils.sendErrMsg(session,throwable.getMessage());
+        } catch (IOException e) {
+            log.error(e.getMessage());
+        }
+    }
+
     @OnClose
     public void onClose() {
-        WebSocketUtils.removeGuardianConnection(user.getId());
-        log.info("监护人连接关闭:{}", user);
+        if(user != null) {
+            WebSocketUtils.removeGuardianConnection(user.getId());
+            log.info("监护人连接关闭:{}", user);
+        }else {
+            log.info("建立连接失败");
+        }
     }
 }

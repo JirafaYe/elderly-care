@@ -37,7 +37,7 @@ public class MyBatisPlusGenerator {
     private static String PATH_SERVICE_IMP = "/src/main/java/org/cuit/app/service/sign/";
     private static String PATH_ENTITY = "/src/main/java/org/cuit/app/entity";
 
-        public final static String PROJECT_PATH="D:\\IdeaProject\\elderly-care\\elderly-care-code";
+    public final static String PROJECT_PATH="D:\\IdeaProject\\elderly-care\\elderly-care-code";
 
 
     public static void main(String[] args) {

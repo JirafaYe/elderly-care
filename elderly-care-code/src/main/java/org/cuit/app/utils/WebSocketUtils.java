@@ -12,7 +12,7 @@ import java.util.TimeZone;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
-public class WebSocketUtils {
+public class WebSocketUtils{
     /**
      * 用于存所有的连接服务的 老人客户端
      */
@@ -34,6 +34,10 @@ public class WebSocketUtils {
         id.getBasicRemote().sendText(new ObjectMapper()
                 .setTimeZone(TimeZone.getTimeZone("Asia/Shanghai"))
                 .writeValueAsString(R.ok(vo, "type:" + vo.getClass().getSimpleName())));
+    }
+    public static void sendErrMsg(Session session,String errMsg) throws IOException {
+        session.getBasicRemote().sendText(new ObjectMapper()
+                .writeValueAsString(R.fail(errMsg)));
     }
 
     public static void addElderlyConnection(Integer userId, Session session) {
