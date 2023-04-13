@@ -3,10 +3,12 @@ package org.cuit.app.utils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.extern.slf4j.Slf4j;
-import org.cuit.app.exception.AppException;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import javax.websocket.Session;
 import java.io.IOException;
+import java.util.TimeZone;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
@@ -25,11 +27,13 @@ public class WebSocketUtils {
     public static void sendMsg(ConcurrentHashMap<Integer, Session> connectionMap, Integer userId, Object vo) throws IOException {
         Session id = connectionMap.get(userId);
         if (id == null) {
-//            throw new AppException("websocket unconnected");
             log.error("websocket unconnected");
             return;
         }
-        id.getBasicRemote().sendText(new ObjectMapper().writeValueAsString(R.ok(vo, "type:" + vo.getClass().getSimpleName())));
+
+        id.getBasicRemote().sendText(new ObjectMapper()
+                .setTimeZone(TimeZone.getTimeZone("Asia/Shanghai"))
+                .writeValueAsString(R.ok(vo, "type:" + vo.getClass().getSimpleName())));
     }
 
     public static void addElderlyConnection(Integer userId, Session session) {

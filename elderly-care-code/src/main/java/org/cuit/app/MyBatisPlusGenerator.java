@@ -20,7 +20,7 @@ import java.util.*;
 
 /**
  * mybatis plus 代码自动生成器
- * 参考： https://blog.csdn.net/ChunwaiLeung/article/details/121629340
+ *
  */
 public class MyBatisPlusGenerator {
     private static String module;

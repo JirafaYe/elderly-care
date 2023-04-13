@@ -137,15 +137,6 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <!-- 配置mybatis代码生成器-->
             </plugin>
-            <plugin>
-                <groupId>org.mybatis.generator</groupId>
-                <artifactId>mybatis-generator-maven-plugin</artifactId>
-                <configuration>
-                    <configurationFile>src/main/resources/mybatis-generator-config.xml</configurationFile>
-                    <overwrite>true</overwrite>
-                    <includeCompileDependencies>true</includeCompileDependencies>
-                </configuration>
-            </plugin>
         </plugins>
 
 
